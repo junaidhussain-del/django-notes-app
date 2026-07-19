@@ -1,0 +1,26 @@
+name: Deploy to Production Servers
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        server: [SERVER_A_HOST, SERVER_B_HOST]
+    steps:
+      - name: Deploy to server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets[matrix.server] }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd ${{ secrets.APP_PATH }}
+            git pull origin main
+            docker compose build django_app
+            docker compose up -d --no-deps django_app nginx
+            docker image prune -f

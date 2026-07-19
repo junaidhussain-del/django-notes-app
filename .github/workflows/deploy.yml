@@ -20,6 +20,10 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             set -e
-            cd /Demo
-            if [ -d "django-notes-app" ]; then
-              cd django-notes-app
+            cd /Demo/django-notes-app
+            git fetch origin main
+            git reset --hard origin/main
+            git clean -fd
+            docker compose build --no-cache django_app
+            docker compose up -d --no-deps django_app nginx
+            docker image prune -f

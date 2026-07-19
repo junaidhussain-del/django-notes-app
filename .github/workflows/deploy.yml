@@ -19,8 +19,7 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd ${{ secrets.APP_PATH }}
-            git pull origin main
-            docker compose build django_app
-            docker compose up -d --no-deps django_app nginx
-            docker image prune -f
+            set -e
+            cd /Demo
+            if [ -d "django-notes-app" ]; then
+              cd django-notes-app
